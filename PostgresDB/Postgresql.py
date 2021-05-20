@@ -38,33 +38,32 @@ class Postgresql:
 
         return query_result
 
-    def get_rows(self, sql: str, as_dict: bool = False):
+    def get_rows(self, sql: str, as_dict: bool = False) -> list[dict] or list[tuple]:
         """
         For queries with select statement
         :param as_dict:
         :param sql: sql query
         :return:
         """
-        query_result = None
 
         cursor = self.__conn.cursor()
 
         try:
             cursor.execute(sql)
-
             values = cursor.fetchall()
-            ################################ПЕРЕДЕЛАТЬ ЭТУ ДИЧЬ
-            query_result = values
+
             if as_dict:
                 cols_names = [column[0] for column in cursor.description]
                 query_result = [dict(zip(cols_names, row)) for row in values]
+
+                return query_result
 
         except Exception:
             self.__conn.rollback()
             self.__del__()
             raise
 
-        return query_result
+        return values
 
     def get_column(self, sql: str) -> list:
         """ Should return list of values for query with one column"""
@@ -76,4 +75,5 @@ class Postgresql:
             return []
         else:
             return [row[0] for row in result]
+
 

@@ -1,7 +1,5 @@
 #TODO:
-# Наладить нотификейшн
-# Структура проекта 3-4 файла
-# Сделать класс для этой бд
+# нотификейшн если не удалось собрать или добавить данные
 
 from config import Config
 from PostgresDB import Postgresql
@@ -34,7 +32,7 @@ def check_or_create_table(curr_pair: str):
 
 
 def main():
-    currency_pair = 'usd_eur'
+    currency_pair = 'usd_uah'
 
     pg = Postgresql(credentials=Config.credentials)
     r = RatesAPI(token=Config.token)
