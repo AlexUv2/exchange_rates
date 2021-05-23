@@ -1,16 +1,18 @@
 from PostgresDB import Postgresql
 from config import Config
 from datetime import datetime, timedelta
-from notify.email import Email
-#TODO: Добавить график курса за последние дни
+from Notification.email import Email
+
+
+# TODO:
+# Add plots to email with rates for the last days
 
 
 def compare_rates(curr_pair: str, period: int):
     """
-    Сравнивает даныне за последние 10 дней с сегодняшним курсом
-    :return:
+    Compares data for the last 10 days
     """
-    pg = Postgresql(credentials=Config.credentials)
+    pg = Postgresql(credentials=Config.DB_CREDS)
 
     today = datetime.today()
     end_date = datetime.today() - timedelta(days=1)
@@ -50,24 +52,29 @@ def email_send(rates: dict):
 
     message = None
     if rates['today_rate'] > max(rates['last_days_rates']):
-        message = f'''<h2>Сегодня хороший курс для <b>продажи</b> доллара</h2>
-                      <div>Средний курс за прошедшие 10 дней: 
-                      <b color="red">{round(sum(rates['last_days_rates']) / len(rates['last_days_rates']), 3)}</b></div>
-                      <div>Сегодняшний курс: <b color="blue">{rates['today_rate']}</b></div>
-                      '''
+        message = f'''
+                   <h2>Сегодня хороший курс для <b>продажи</b> доллара</h2>
+                   <div>Средний курс за прошедшие 10 дней: 
+                   <b color="red">{round(sum(rates['last_days_rates']) / len(rates['last_days_rates']), 3)}</b></div>
+                   <div>Сегодняшний курс: <b color="blue">{rates['today_rate']}</b></div>
+                   '''
 
-    if rates['today_rate'] < min(rates['last_days_rates']):
-        message = f'''<h2>Сегодня хороший курс для <b>покупки</b> доллара</h2>
-                      <div>Средний курс за прошедшие 10 дней: 
-                      <b color="red">{round(sum(rates['last_days_rates']) / len(rates['last_days_rates']), 3)}</b></div>
-                      <div>Сегодняшний курс: <b color="blue">{rates['today_rate']}</b></div>
-                      '''
+    elif rates['today_rate'] < min(rates['last_days_rates']):
+        message = f'''
+                   <h2>Сегодня хороший курс для <b>покупки</b> доллара</h2>
+                   <div>Средний курс за прошедшие 10 дней: 
+                   <b color="red">{round(sum(rates['last_days_rates']) / len(rates['last_days_rates']), 3)}</b></div>
+                   <div>Сегодняшний курс: <b color="blue">{rates['today_rate']}</b></div>
+                   '''
+    else:
+        print('No good news to you')
+
     if message:
         e.send(to=Config.EMAIL_TO, message=message, subject=subject, is_html=True)
 
 
 def main():
-    rates = compare_rates(period=10, curr_pair='usd_uah')
+    rates = compare_rates(period=10, curr_pair=Config.CURRENCY_PAIR)
     email_send(rates=rates)
 
 

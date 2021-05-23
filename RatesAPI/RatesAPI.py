@@ -1,6 +1,5 @@
 import requests
 from time import sleep
-from config import Config
 
 MAX_TRY_COUNT = 5
 SLEEP_BETWEEN_TRY_SEC = 5
@@ -21,7 +20,7 @@ class RatesAPI:
             raise Exception('Status code not 200')
         except Exception as e:
             sleep(SLEEP_BETWEEN_TRY_SEC)
-            print(f'''[AhrefsAPI][get_response] Except {e.__class__.name}! Try count: {try_count} 
+            print(f'''[RatesAPI][get_response] Except {e.__class__.name}! Try count: {try_count} 
                      Sleep {SLEEP_BETWEEN_TRY_SEC} sec between next try''')
             if try_count == MAX_TRY_COUNT:
                 raise Exception("Can't reach domain")

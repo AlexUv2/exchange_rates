@@ -9,8 +9,8 @@ class Email:
         self.__connection.login(user=credentials['login'], password=credentials['password'])
 
     def send(self, to, subject: str, message: str, is_html: bool = False):
-        if not isinstance(to, str) and not isinstance(to, list):
-            raise SendMailMessageError("Unknown argument type 'to' [{}]".format(type(to)))
+        if not isinstance(to, list) and not isinstance(to, str):
+            raise Exception("Unknown argument type 'to' [{}]".format(type(to)))
 
         subtype = 'plain' if not is_html else 'html'
         msg = MIMEText(_text=message, _subtype=subtype, _charset='utf-8')
@@ -25,6 +25,3 @@ class Email:
         if self.__connection:
             self.__connection.close()
 
-
-class SendMailMessageError(Exception):
-    pass

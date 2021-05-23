@@ -8,6 +8,7 @@ class Postgresql:
         try:
             self.__conn = psycopg2.connect(dbname=credentials['dbname'], user=credentials['user'],
                                            password=credentials['password'], host=credentials['host'])
+
         except Exception:
             self.__conn = None
             raise Exception('Connection failed')
