@@ -27,6 +27,8 @@ Python script for detecting the best exchange rate for the last 10 days
             'port': 465, # default port for smtp
             'host': 'smtp.gmail.com' # default smtp host for gmail. Change it for anothe emails
         }
+        
+        PERIOD = <int: num_of_days>
 
   3. Create PostgreSQL database or add exciting database credentials to 'config.py'
   4. Set to autorun data_collection.py and check_rates.py
