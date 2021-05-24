@@ -43,7 +43,7 @@ def main():
         sql = f"insert into {currency_pair.lower()}(rate) values ({rates[currency_pair.upper()]})"
         pg.exec(sql=sql)
 
-    print('Data collected successfully')
+    print('Data collected successfully, everything is good')
 
 
 if __name__ == '__main__':
