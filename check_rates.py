@@ -8,7 +8,7 @@ from Notification.email import Email
 # Add plots to email with rates for the last days
 
 
-def compare_rates(curr_pair: str, period: int):
+def compare_rates(curr_pair: str, period: int) -> dict:
     """
     Compares data for the last 10 days
     """
@@ -25,6 +25,9 @@ def compare_rates(curr_pair: str, period: int):
             where datetime::date between '{start_date}' and '{end_date}';
         """
     last_days_rate = pg.get_column(sql=sql)
+
+    if len(last_days_rate) < Config.PERIOD * 0.75:
+        raise Exception('Not enough data for comparison')
 
     sql = f"""
             select 
@@ -46,24 +49,26 @@ def compare_rates(curr_pair: str, period: int):
 
 
 def email_send(rates: dict):
-    subject = 'Currency rates'
 
     e = Email(credentials=Config.EMAIL_CREDS)
 
+    mid_rates = round(sum(rates['last_days_rates']) / len(rates['last_days_rates']), 3)
+
+    subject = 'Currency rates'
     message = None
     if rates['today_rate'] > max(rates['last_days_rates']):
         message = f'''
                    <h2>Сегодня хороший курс для <b>продажи</b> доллара</h2>
-                   <div>Средний курс за прошедшие 10 дней: 
-                   <b color="red">{round(sum(rates['last_days_rates']) / len(rates['last_days_rates']), 3)}</b></div>
+                   <div>Средний курс за прошедшие {Config.PERIOD} дней: 
+                   <b color="red">{mid_rates}</b></div>
                    <div>Сегодняшний курс: <b color="blue">{rates['today_rate']}</b></div>
                    '''
 
     elif rates['today_rate'] < min(rates['last_days_rates']):
         message = f'''
                    <h2>Сегодня хороший курс для <b>покупки</b> доллара</h2>
-                   <div>Средний курс за прошедшие 10 дней: 
-                   <b color="red">{round(sum(rates['last_days_rates']) / len(rates['last_days_rates']), 3)}</b></div>
+                   <div>Средний курс за прошедшие {Config.PERIOD} дней: 
+                   <b color="red">{mid_rates}</b></div>
                    <div>Сегодняшний курс: <b color="blue">{rates['today_rate']}</b></div>
                    '''
     else:
@@ -74,7 +79,7 @@ def email_send(rates: dict):
 
 
 def main():
-    rates = compare_rates(period=10, curr_pair=Config.CURRENCY_PAIR)
+    rates = compare_rates(period=Config.PERIOD, curr_pair=Config.CURRENCY_PAIR)
     email_send(rates=rates)
 
 
