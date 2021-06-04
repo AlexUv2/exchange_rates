@@ -40,7 +40,8 @@ def main():
 
     rates = r.get_rate(curr_pair=currency_pair)
     if rates:
-        sql = f"insert into {currency_pair.lower()}(rate) values ({rates[currency_pair.upper()]})"
+        sql = f"""insert into {currency_pair.lower()}(rate) 
+                  values ({rates[currency_pair.upper()]})"""
         pg.exec(sql=sql)
 
     print('Data collected successfully, everything is good')
