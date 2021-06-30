@@ -46,7 +46,6 @@ Python script for detecting the best exchange rate for the last 10 days
 
 
 #### Plans for future:
- 1. Add plots to email for seeing how rates changed.
- 2. Add a prediction model for each currency pairs.
- 3. Add ability to process data for more currency pairs.
+ 1. Add a prediction model for each currency pairs.
+ 2. Add ability to process data for more currency pairs.
     
