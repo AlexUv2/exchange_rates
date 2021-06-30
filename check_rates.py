@@ -7,7 +7,6 @@ import matplotlib.pyplot as plt
 from matplotlib.dates import DateFormatter
 
 
-
 def compare_rates(curr_pair: str, period: int) -> dict:
     """
     Compares data for the last 10 days
@@ -25,16 +24,6 @@ def compare_rates(curr_pair: str, period: int) -> dict:
             where datetime::date between '{start_date}' and '{end_date}';
         """
     last_days_rate = pg.get_column(sql=sql)
-
-    sql = f"""
-            select count(distinct datetime::date)
-            from usd_uah;
-        """
-    days_with_data = pg.get_column(sql=sql)
-
-    # if days_with_data[0] < Config.PERIOD * 0.75:
-    #     raise Exception('Not enough data for comparison')
-    # uncomment after 15 days.
 
     sql = f"""
             select 
@@ -58,7 +47,6 @@ def compare_rates(curr_pair: str, period: int) -> dict:
 def email_send(rates: dict):
 
     e = Email(credentials=Config.EMAIL_CREDS)
-
     mid_rates = round(sum(rates['last_days_rates']) / len(rates['last_days_rates']), 3)
 
     subject = 'Currency rates'
